@@ -13,35 +13,11 @@
 QString ParseSubInfo(const QString &info) {
     if (info.trimmed().isEmpty()) return "";
 
-    QString result;
+    const auto sub = ParseSubUserInfo(info);
+    if (!sub.hasTotal) return "";
 
-    long long used = 0;
-    long long total = 0;
-    long long expire = 0;
-
-    auto re0m = QRegularExpression("total=([0-9]+)").match(info);
-    if (re0m.lastCapturedIndex() >= 1) {
-        total = re0m.captured(1).toLongLong();
-    } else {
-        return "";
-    }
-    auto re1m = QRegularExpression("upload=([0-9]+)").match(info);
-    if (re1m.lastCapturedIndex() >= 1) {
-        used += re1m.captured(1).toLongLong();
-    }
-    auto re2m = QRegularExpression("download=([0-9]+)").match(info);
-    if (re2m.lastCapturedIndex() >= 1) {
-        used += re2m.captured(1).toLongLong();
-    }
-    auto re3m = QRegularExpression("expire=([0-9]+)").match(info);
-    if (re3m.lastCapturedIndex() >= 1) {
-        expire = re3m.captured(1).toLongLong();
-    }
-
-    result = QObject::tr("Used: %1 Remain: %2 Expire: %3")
-                         .arg(ReadableSize(used), (total == 0) ? QString::fromUtf8("\u221E") : ReadableSize(total - used), DisplayTime(expire, QLocale::ShortFormat));
-
-    return result;
+    return QObject::tr("Used: %1 Remain: %2 Expire: %3")
+                         .arg(ReadableSize(sub.used), (sub.total == 0) ? QString::fromUtf8("\u221E") : ReadableSize(sub.total - sub.used), DisplayTime(sub.expire, QLocale::ShortFormat));
 }
 
 GroupItem::GroupItem(QWidget *parent, const std::shared_ptr<Configs::Group> &ent, QListWidgetItem *item) : QWidget(parent), ui(new Ui::GroupItem) {

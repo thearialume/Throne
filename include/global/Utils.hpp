@@ -262,6 +262,17 @@ QString DisplayTime(long long time, int formatType = 0);
 
 QString ReadableSize(const qint64 &size);
 
+struct SubUserInfo {
+    qint64 total = 0;   // 0 => no finite quota reported
+    qint64 used = 0;    // upload + download, in bytes
+    qint64 expire = 0;  // epoch seconds; 0 => no expiry reported
+    bool hasTotal = false;   // server sent an explicit total
+    bool hasQuota = false;   // any of total/upload/download were present
+    bool hasExpire = false;  // an expire field was present
+};
+
+SubUserInfo ParseSubUserInfo(const QString &header);
+
 inline bool InRange(unsigned x, unsigned low, unsigned high) {
     return (low <= x && x <= high);
 }

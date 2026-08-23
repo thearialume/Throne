@@ -262,6 +262,27 @@ QString DisplayTime(long long time, int formatType) {
     return QLocale().toString(t, QLocale::FormatType(formatType));
 }
 
+// Taken and refactored from src/ui/group/GroupItem.cpp
+SubUserInfo ParseSubUserInfo(const QString &header) {
+    SubUserInfo info;
+    if (header.trimmed().isEmpty()) return info;
+
+    // Match each key=digits anywhere in the line
+    static const QRegularExpression re(R"(\b(upload|download|total|expire)\s*=\s*([0-9]+))",
+                                       QRegularExpression::CaseInsensitiveOption);
+    auto it = re.globalMatch(header);
+    while (it.hasNext()) {
+        const auto m = it.next();
+        const auto key = m.captured(1).toLower();
+        const qint64 val = m.captured(2).toLongLong();
+        if (key == "upload") { info.used += val;    info.hasQuota = true; }
+        else if (key == "download") { info.used += val; info.hasQuota = true; }
+        else if (key == "total") { info.total = val; info.hasTotal = true; info.hasQuota = true; }
+        else if (key == "expire") { info.expire = val; info.hasExpire = true; }
+    }
+    return info;
+}
+
 QWidget *GetMessageBoxParent() {
     auto activeWindow = QApplication::activeWindow();
     if (activeWindow == nullptr && mainwindow != nullptr) {

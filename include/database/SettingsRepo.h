@@ -149,6 +149,10 @@ namespace Configs {
         bool sub_send_hwid = false;
         QString sub_custom_hwid_params = "";
         bool allow_stopping_active_profile = false;
+        // How the per-group subscription strip below the profiles table is shown.
+        // 0 = Smart (only when the server sent usage/expiry data), 1 = Always (every
+        // subscription group, falling back to last-update only), 2 = Never.
+        int sub_usage_bar = 0;
 
         // Security
         bool skip_cert = false;

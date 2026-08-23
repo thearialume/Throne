@@ -109,6 +109,7 @@ namespace Configs {
             {"ruleset_mirror",         &ruleset_mirror},
             {"core_dns_in_port",       &core_dns_in_port},
             {"dns_cache_capacity", &dns_cache_capacity},
+            {"sub_usage_bar",      &sub_usage_bar},
         };
 
         stringMap = {

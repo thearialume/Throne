@@ -21,6 +21,7 @@
 #include "include/ui/stats/dialog_traffic_stats.h"
 #include "include/ui/stats/dialog_runtime_stats.h"
 #include "include/ui/widget/StartStopButton.hpp"
+#include "include/ui/widget/SubInfoStatusBar.h"
 
 #include "include/configs/generate.h"
 #include "include/database/GroupsRepo.h"
@@ -171,6 +172,19 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
     // setup log
     ui->splitter->restoreState(DecodeB64IfValid(Configs::dataManager->settingsRepo->splitter_state));
+
+    // Subscription status
+    ui->splitter->insertWidget(1, (subInfoStatusBar = new SubInfoStatusBar(this)));
+    ui->splitter->setStretchFactor(0, 1);
+    ui->splitter->setStretchFactor(1, 0);
+    ui->splitter->setStretchFactor(2, 1);
+    refreshInfoBar();
+
+    connect(Subscription::groupUpdater, &Subscription::GroupUpdater::asyncUpdateCallback,
+            this, [this](int gid) {
+        if (gid == Configs::dataManager->settingsRepo->current_group) refreshInfoBar();
+    }, Qt::QueuedConnection);
+
     setLogHighlighter(themeUsesDarkLog(Configs::dataManager->settingsRepo->theme));
     qvLogDocument->setUndoRedoEnabled(false);
     qvLogDocument->setMaximumBlockCount(Configs::dataManager->settingsRepo->max_log_line);

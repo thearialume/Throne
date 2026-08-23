@@ -9,6 +9,7 @@
 #include "include/configs/sub/GroupUpdater.hpp"
 #include "include/database/GroupsRepo.h"
 #include "include/ui/group/dialog_edit_group.h"
+#include "include/ui/widget/SubInfoStatusBar.h"
 #include "include/ui/mainWindow/MainWindowInternal.h"
 
 
@@ -58,6 +59,13 @@ void MainWindow::show_group(int gid) {
     });
 
     Configs::dataManager->settingsRepo->refreshing_group = false;
+    refreshInfoBar();
+}
+
+void MainWindow::refreshInfoBar() {
+    auto group = Configs::dataManager->groupsRepo
+                     ->GetGroup(Configs::dataManager->settingsRepo->current_group);
+    subInfoStatusBar->Refresh(group);
 }
 
 // refresh_groups -> show_group -> refresh_proxy_list

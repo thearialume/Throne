@@ -51,6 +51,7 @@ namespace Configs_sys {
 
 class TrayProfileSelector;
 class TrayOtpCodes;
+class SubInfoStatusBar;
 class TestRunner;
 class DialogVpnAuth;
 struct VpnAuthChallenge;
@@ -101,6 +102,9 @@ public:
     void show_group(int gid);
 
     void refresh_groups();
+
+    // Re-renders the subscription status strip for the current group. UI thread only.
+    void refreshInfoBar();
 
     void refresh_status(const QString &traffic_update = "");
 
@@ -216,6 +220,9 @@ private slots:
 
 private:
     Ui::MainWindow *ui;
+    // Subscription status strip between the profiles tab and the logs/connections
+    // panel, reflecting the currently selected group (see SubInfoStatusBar).
+    SubInfoStatusBar *subInfoStatusBar = nullptr;
     QElapsedTimer sinceWindowDeactivated;
     ProfilesTableModel *profilesTableModel = nullptr;
 

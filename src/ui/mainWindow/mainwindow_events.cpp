@@ -211,8 +211,14 @@ bool MainWindow::eventFilter(QObject *obj, QEvent *event) {
         }
     } else if (type == QEvent::MouseButtonDblClick) {
         if (obj == ui->splitter) {
-            const auto size = ui->splitter->size();
-            ui->splitter->setSizes({size.height() / 2, size.height() / 2});
+            // Evenly split between the profiles tab and the lower panel. The
+            // subscription strip sits at index 1 and keeps a fixed height, so
+            // give it back exactly what it occupies and share the rest.
+            auto strip = ui->splitter->widget(1);
+            const int stripH = (strip != nullptr && strip->isVisible()) ? strip->height() : 0;
+            const int total = ui->splitter->size().height();
+            const int half = (total - stripH) / 2;
+            ui->splitter->setSizes({half, stripH, half});
         }
     }
     return QMainWindow::eventFilter(obj, event);
